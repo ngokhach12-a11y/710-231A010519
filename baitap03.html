@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 3: Đoán Số</title>
+    <style>
+        body{font-family:sans-serif; text-align: center; padding-top: 50px;}
+        input {padding: 10px; width: 100px; text-align: center;}
+        button {padding: 10px 20px;}
+        #message {margin-top: 20px; font-weight: bold; font-size: 1.2em;}
+        /* Confetti đơn giản */
+        @keyframes confetti { 0% { transform: translateY(0) rotate(0); } 100% { transform: translateY(100vh) rotate(360deg); } }
+        .confetti-piece { position: fixed; width: 10px; height: 10px; background: red; top: -10px; animation: confetti 2s linear forwards; }
+        .explanation{margin-top:50px;background:#f4f4f4;padding:15px;text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;}
+    </style>
+</head>
+<body>
+    <h2>Bài 3: Game Đoán Số (1-100)</h2>
+    <p>Nhập số bạn đoán:</p>
+    <input type="number" id="guessInput" min="1" max="100">
+    <button onclick="checkGuess()">Đoán</button>
+    <p id="message"></p>
+    <p>Số lần thử: <span id="count">0</span></p>
+
+    <div class="explanation">
+        <strong>Giải thích Logic:</strong><br>
+        - <b>Random:</b> <code>Math.floor(Math.random() * 100) + 1</code> tạo số ngẫu nhiên 1-100 khi load trang.<br>
+        - <b>Validate:</b> Kiểm tra nếu input rỗng hoặc < 1 hoặc > 100 thì báo lỗi.<br>
+        - <b>Win:</b> Nếu đúng, tạo các thẻ div <code>confetti-piece</code> bằng JS và add vào body để tạo hiệu ứng pháo hoa.
+    </div>
+
+    <script>
+        let secretNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+
+        function checkGuess() {
+            const userGuess = parseInt(document.getElementById('guessInput').value);
+            const msg = document.getElementById('message');
+            
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                msg.textContent = "Vui lòng nhập số từ 1 đến 100!";
+                msg.style.color = "red";
+                return;
+            }
+
+            attempts++;
+            document.getElementById('count').textContent = attempts;
+
+            if (userGuess === secretNumber) {
+                msg.textContent = "CHÚC MỪNG! BẠN ĐÃ ĐOÁN ĐÚNG! 🎉";
+                msg.style.color = "green";
+                celebrate();
+            } else if (userGuess < secretNumber) {
+                msg.textContent = "Thấp quá! Thử số lớn hơn.";
+                msg.style.color = "orange";
+            } else {
+                msg.textContent = "Cao quá! Thử số nhỏ hơn.";
+                msg.style.color = "orange";
+            }
+        }
+
+        function celebrate() {
+            for(let i=0; i<50; i++) {
+                let piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                piece.style.animationDuration = (Math.random() * 1 + 1) + 's';
+                document.body.appendChild(piece);
+            }
+        }
+    </script>
+</body>
+</html>
