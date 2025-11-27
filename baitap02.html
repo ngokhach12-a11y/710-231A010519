@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 2: Todo List</title>
+    <style>
+        body{font-family:sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;}
+        .input-group {display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-bottom: 20px;}
+        input {padding: 10px; font-size: 16px;}
+        button {padding: 10px 20px; cursor: pointer; background: #28a745; color: white; border: none;}
+        ul {list-style: none; padding: 0;}
+        li {background: #fff; border-bottom: 1px solid #ddd; padding: 10px; display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center;}
+        .delete-btn {background: #dc3545;}
+        .edit-btn {background: #ffc107; color: black;}
+        .explanation{margin-top:20px;background:#f4f4f4;padding:15px;border-radius:8px;}
+    </style>
+</head>
+<body>
+    <h2>Bài 2: Todo List LocalStorage</h2>
+    <div class="input-group">
+        <input type="text" id="taskInput" placeholder="Nhập công việc...">
+        <button onclick="addTask()">Thêm</button>
+    </div>
+    <ul id="taskList"></ul>
+
+    <div class="explanation">
+        <strong>Giải thích Logic:</strong><br>
+        - <b>State:</b> Dùng mảng <code>tasks</code> chứa object {id, text}.<br>
+        - <b>LocalStorage:</b> Dùng <code>JSON.stringify</code> để lưu và <code>JSON.parse</code> để lấy dữ liệu khi load trang.<br>
+        - <b>Render:</b> Mỗi khi thêm/xóa, hàm <code>render()</code> sẽ xóa HTML cũ và tạo lại danh sách mới từ mảng để đảm bảo đồng bộ.
+    </div>
+
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('todos')) || [];
+
+        function render() {
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+            tasks.forEach((task, index) => {
+                list.innerHTML += `
+                    <li>
+                        <span>${task.text}</span>
+                        <button class="edit-btn" onclick="editTask(${index})">Sửa</button>
+                        <button class="delete-btn" onclick="deleteTask(${index})">Xóa</button>
+                    </li>`;
+            });
+            localStorage.setItem('todos', JSON.stringify(tasks));
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            if (input.value.trim() === '') return;
+            tasks.push({ text: input.value });
+            input.value = '';
+            render();
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            render();
+        }
+
+        function editTask(index) {
+            const newText = prompt("Sửa công việc:", tasks[index].text);
+            if (newText !== null) {
+                tasks[index].text = newText;
+                render();
+            }
+        }
+        render(); // Chạy lần đầu
+    </script>
+</body>
+</html>
